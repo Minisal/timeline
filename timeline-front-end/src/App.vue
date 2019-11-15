@@ -1,71 +1,51 @@
 <template>
-  <div id="div-timeline">
-  <timeline>
-    <timeline-title><h1>Timeline</h1></timeline-title>
-     <button>new</button>
-    <timeline-item bg-color="#9dd8e0" v-for="message in messages">
-      <h2>{{message.user}}</h2>
-      {{message.content}}
-      <p>{{message.addTime}}</p>
-    </timeline-item>
-
-  </timeline>
-    <button>more</button>
+  <div id="app">
+    <div class="background">
+    <timelines id="timeline" v-bind:messages="messages"/>
+    </div>
   </div>
 </template>
 
 <script>
-  import { Timeline, TimelineItem, TimelineTitle } from 'vue-cute-timeline'
-  import axios from 'axios';
+import timelines from './components/TimeLine'
+import axios from 'axios'
 
-  export default {
-    components: {
-      Timeline,
-      TimelineItem,
-      TimelineTitle
-    },
-    data() {
-      return {
-        messages: [
-          {
-            user:"user",
-            content:"content",
-            addTime:"2019-10-20 00:00:00"
-          },{
-            user:"user",
-            content:"content",
-            addTime:"2019-10-20 00:00:00"
-          },
-          {
-            user:"user",
-            content:"content",
-            addTime:"2019-10-20 00:00:00"
-          },
-          {
-            user:"user",
-            content:"content",
-            addTime:"2019-10-20 00:00:00"
-          }
-        ],
-        info : null
-      }
-    },
-    mounted() {
-      axios.get('http://localhost:8080/message/getNew')
-              .then(response => (console.log(response)))
-              .catch(function(error){
-                console.log(error);
-              })
+export default {
+  name: 'app',
+  components: {
+    timelines
+  },
+  data: function () {
+    return {
+      messages: null
     }
+  },
+  created () {
+    var that = this
+    axios
+      .get('http://localhost:8080/message/getNow')
+      .then(function (res) {
+        console.log(res.data)
+        that.messages = res.data.reverse()
+      }).catch(function (error) {
+        console.log(error)
+      })
   }
-
+}
 </script>
 
-
 <style>
-#div-timeline{
-  width: 400px;
-  height: 500px;
+#app {
+  margin-top: 60px;
 }
+  .background{
+    width: 400px;
+    height: 600px;
+    margin:0 auto;
+    border-style: solid;
+    border-width: 2px;
+    border-color: #9dd8e0;
+    overflow:scroll;
+  }
 
 </style>
